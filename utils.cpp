@@ -7,8 +7,11 @@
 #include <sys/sem.h>
 #include <string.h>
 #include <sys/types.h>
+#include <time.h>
+#include <ctype.h>
 #include "utils.h"
 
+//union necessaire pour l'init de semaphore
 union semun
 {
 	int val;
@@ -18,6 +21,13 @@ union semun
 
 void initTab(char *ptab)
 {
+	if(ptab == NULL)
+	{
+		printf("tab vide \n");
+		return;
+	}
+	//initialisation de TAILLEBUF carac de ptab
+	printf("init tab\n");
 	for(int i=0; i < TAILLEBUF; i++)
 	{
 		ptab[i]='P';
@@ -26,6 +36,13 @@ void initTab(char *ptab)
 
 void AfficheTab(char *ptab)
 {	
+	if(ptab == NULL)
+	{
+		printf("tab vide \n");
+		return;
+	}
+	
+	//on affiche TAILLEBUF carac du buffer
 	printf("Buffer : ");
 	for(int i=0; i < TAILLEBUF; i++)
 	{
@@ -34,48 +51,54 @@ void AfficheTab(char *ptab)
 	printf("\n");
 }
 
-int SemInit(int idSem)
-{
-	unsigned short Val[] = {0,0,TAILLEBUF};
-	arg_sem.array = Val;
-	semctl(idSem, 0, SETALL, arg_sem);
-}
-
 int SemWait(int idSem, int Sema)
 {
 	struct sembuf SemOp[2];
 	
+	//pour l'acces buf
 	SemOp[0].sem_num = 0;
 	SemOp[0].sem_op = -1;
-	SemOp[0].sem_flg = SEM_UNDO;
+	SemOp[0].sem_flg = 0;
 	
+	// soit PLACEDISPO soit ELEMDISPO
 	SemOp[1].sem_num = Sema;
 	SemOp[1].sem_op = -1;
-	SemOp[1].sem_flg = SEM_UNDO;
-	
-	return semop(idSem, SemOp, 1);
+	SemOp[1].sem_flg = 0;
+	if(semop(idSem, SemOp, 2) == -1)
+	{
+		perror("Erreur wait !!");
+		return -1;
+	}
+	return 1;
 }
 
 int SemSignal(int idSem, int Sema)
 {
 	struct sembuf SemOp[2];
 	
+	//pour l'acces buf
 	SemOp[0].sem_num = 0;
 	SemOp[0].sem_op = +1;
-	SemOp[0].sem_flg = SEM_UNDO;
+	SemOp[0].sem_flg = 0;
 	
-	
+	// soit PLACEDISPO soit ELEMDISPO
 	SemOp[1].sem_num = Sema;
 	SemOp[1].sem_op = +1;
-	SemOp[1].sem_flg = SEM_UNDO;
+	SemOp[1].sem_flg = 0;
 	
-	return semop(idSem, SemOp, 1);
+	if(semop(idSem, SemOp, 2) == -1)
+	{
+		perror("Erreur signal !!");
+		return -1;
+	}
+	return 1;
 }
 
 int ShmInit(int flag)
 {
 	int idShm;
-	if((idShm = shmget(KEY,(size_t)TAILLEBUF*sizeof(char),IPC_CREAT|IPC_EXCL|0600)) == -1)
+	//on cree ou recupere l'idShm
+	if((idShm = shmget(KEY,(size_t)TAILLEBUF*sizeof(char),flag)) == -1)
 	{
 		perror("Erreur de memoire partagee");
 		exit(0);
@@ -84,6 +107,109 @@ int ShmInit(int flag)
 	printf("Shm cree !\n");
 	return idShm;
 }
+
+int SemInit(int flag)
+{
+	int idSem;
+	//on cree ou recupere l'idSem
+	if((idSem = semget(KEY, 3 ,flag)) == -1)
+	{
+		perror("Erreur sémaphore !");
+		exit(0);
+	}
+	printf("Semaphore obtenue ! \n");
+	if(flag != 0)
+	{
+		// si il n'y a pas de flag donc pas de construction alors on init les semaphore
+		printf("Semaphore init val\n");
+		// 0:buffer    1:ELEMDISPO      2:PLACEDISPO
+		unsigned short Val[] = {1,TAILLEBUF,0};
+		arg_sem.array = Val;
+		semctl(idSem, 0, SETALL, arg_sem);
+	}
+	return idSem;
+}
+
+char *ShmAttach(int idShm)
+{
+	char *buf;
+	// on attach le Shm a buf
+	buf = (char *)shmat(idShm,NULL,0);
+	if(buf == (char *)-1)
+	{
+		perror("Shm fail !");
+	}
+	printf("Shm ratacher! \n");
+	return buf;
+}
+
+char prodCarac(char *buf, int numero, char Actu)
+{
+	if(buf == NULL)
+		return -1;
+	
+	char carac=Actu;
+	
+	numero = numero%2;// 0 = minuscule     1 = MAJUSCULE
+	if(carac == 'z' || carac == 'Z')
+			numero==1 ? carac = 'a' : carac = 'A';
+	for(int i=0; i<TAILLEBUF; i++)
+	{
+		// si non alphabetique on peut produire a cette place
+		if(!isalpha((int)buf[i]))
+		{
+			buf[i] = carac;
+			carac = (carac+1);//pour que le carac change au prochain 
+			return carac;
+		}
+	}
+	return carac;
+}
+
+int consCarac(char *buf, int numero)
+{
+	if(buf == NULL)
+		return -1;
+		
+	for(int i=0; i<TAILLEBUF; i++)
+	{
+		//si c'est alphabetique on peut le consommer
+		if(isalpha((int)buf[i]))
+		{
+			buf[i]='&';
+			return 1;
+		}
+	}
+	//on a rien trouver a consommer
+	return -1;
+}
+
+int SleepRand(int min, int max)
+{
+	int temps = (rand()%(max-min))+min; // temps E [min, max-1]
+	sleep(temps);
+	return 1;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

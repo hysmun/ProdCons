@@ -1,83 +1,94 @@
+#include <sys/types.h>
+#include <sys/wait.h>
 #include <unistd.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <sys/types.h>
+
 #include <sys/ipc.h>
 #include <sys/msg.h>
 #include <sys/shm.h>
 #include <sys/sem.h>
-#include <sys/wait.h>
 #include <string.h>
+#include <signal.h>
 #include "utils.h"
 
 int idShm, idSem;
-char *buf, *ptr;
-int pidFils[3];
+char *buf, tmp[20];
+int pidFilsProd[NBPROD];
+int pidFilsCons[NBCONS];
 int ret1,ret2,ret3;
-
 
 int pid = getpid();
 
 int main(int argc, char *argv[])
 {
-	//sémaphore   1:buffer    2:elemDispo   3:placeDispo
-	if((idSem = semget(KEY, 3 ,IPC_CREAT|IPC_EXCL|0600)) == -1)
-	{
-		perror("Erreur sémaphore");
-		exit(0);
-	}
-	printf("Semaphore cree ! \n");
+	//sémaphore   0:buffer    1:elemDispo   2:placeDispo
+	idSem = SemInit(IPC_CREAT|IPC_EXCL|0600);
 	
 	
 	//Création de la mémoire partagée
-	if((idShm = shmget(KEY,(size_t)TAILLEBUF*sizeof(char),IPC_CREAT|IPC_EXCL|0600)) == -1)
-	{
-		perror("Erreur de memoire partagee");
-		exit(0);
-	}
-	printf("Shm cree\n");
-	buf = (char*)shmat(idShm,0,0);
-	if(buf == (char*)-1)
-	{
-		printf("Shm fail\n");
-	}
-	printf("Shm rattachee\n");
+	idShm = ShmInit(IPC_CREAT|IPC_EXCL|0600);
+	buf = ShmAttach(idShm);
 	
 	//Initialisation du tableau
 	initTab(buf);
 	AfficheTab(buf);
-
-	//Fork producteur 1
-	pidFils[0] = fork();
-	if(!pidFils[0])
+	
+	printf("Creation prod et cons \n");
+	//Fork producteur 
+	for(int i=0; i<NBPROD; i++)
 	{
-		execl("producteur","producteur",NULL);
+		if((pidFilsProd[i] = fork()))
+		{
+			sprintf(tmp,"%d", i);
+			execlp("./producteur","producteur",tmp,NULL);
+			printf("Erreur exec\n");
+			exit(0);
+		}
+		if(pidFilsProd[i] == -1)
+		{
+			perror("Erreur fork !");
+			exit(0);
+		}
 	}
-	//Fork producteur 2
-	pidFils[1] = fork();
-	if(!pidFils[1])
-	{
-		execl("producteur","producteur",NULL);
-	}
+	
 	//Fork consommateur
-	pidFils[2] = fork();
-	if(!pidFils[2])
+	for(int i=0; i<NBCONS; i++)
 	{
-		execl("consommateur","consommateur",NULL);
+		if((pidFilsCons[i] = fork()) )
+		{
+			sprintf(tmp,"%d", i);
+			execlp("./consommateur","consommateur",tmp,NULL);
+			printf("Erreur exec\n");
+			exit(0);
+		}
+		if(pidFilsCons[i] == -1)
+		{
+			perror("Erreur fork !");
+			exit(0);
+		}
 	}
 	
 	
 	
 	//Attente pour fin processus
-	ret1 = wait(NULL);
-	ret2 = wait(NULL);
-	ret3 = wait(NULL);
+	printf("Attente fin fils !\n");
+	for(int i=0; i<(NBCONS+NBPROD); i++)
+	{
+		if(wait(NULL) < 0)
+		{
+			printf("Erreur wait\n");
+			perror("truc");
+		}
+		printf("%d fils mort\n", i+1);
+	}
 	
 	
 	
 	//Liberation des IPCs
-	shmctl(idShm, IPC_RMID,0);
-	semctl(idSem, IPC_RMID,0);
+	printf("fin prog + suppression IPC\n");
+	//shmctl(idShm, IPC_RMID,0);
+	//semctl(idSem, IPC_RMID,0);
 
 	exit(0);
 }

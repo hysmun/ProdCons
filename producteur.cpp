@@ -8,46 +8,46 @@
 #include <string.h>
 #include "utils.h"
 
-char *buf;
+char *buf, caracActu;
 int idSem;
 int idShm;
 
 int pid = getpid();
+int numero;
 
 int main(int argc, char *argv[])
 {
-	printf("Producteur ! \n");
-	//sémaphore   1:buffer    2:elemDispo   3:placeDispo
-	if((idSem = semget(KEY, 3 ,0)) == -1)
-	{
-		perror("Erreur sémaphore !");
-		exit(0);
-	}
-	printf("Semaphore obtenue ! \n");
+	numero = atoi(argv[1]);
+	printf("\nProducteur numero %d! %d \n", numero, pid);
+	//sémaphore   0:buffer    1:elemDispo   2:placeDispo
+	idSem = SemInit(0);
 	
 	
 	//Création de la mémoire partagée
-	if((idShm = shmget(KEY,(size_t)TAILLEBUF*sizeof(char),0)) == -1)
-	{
-		perror("Erreur de memoire partagee");
-		exit(0);
-	}
-	printf("Shm obtenue");
-	buf = (char*)shmat(idShm,NULL,0);
-	if(buf == (char*)-1)
-	{
-		printf("Shm fail !\n");
-	}
-	printf("Shm ratacher! \n");
+	idShm = ShmInit(0);
+	buf = ShmAttach(idShm);
 	
-	for(int i=0; 1;i++)
+	numero == 0 ? caracActu ='a' : caracActu='A';
+	
+	for(int i=0; i<100;i++)
 	{
+		//wait Place dispo
 		SemWait(idSem, SEMPLACE);
-		//zone de traitement 
 		
+		//zone de traitement
+		printf("\tProd %d -- %d\t\t\t", numero, i);
+		
+		//production carac
+		caracActu = prodCarac(buf, numero, caracActu);
+		
+		//affichage Buffer
+		AfficheTab(buf);
+		
+		//signal Elem dispo     + temps d'attente
 		SemSignal(idSem, SEMELEM);
+		SleepRand(0, 5);
 	}
-	exit(0);
+	exit(1);
 }
 
 

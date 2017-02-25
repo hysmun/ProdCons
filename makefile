@@ -1,7 +1,7 @@
 .SILENT:
 TMP = "default"
 ALLOBJ=
-
+CFLAGS= -Wall -lm
 
 
 
@@ -12,7 +12,7 @@ all:
 	echo make all
 	make main
 	make producteur
-	make consomateur
+	make consommateur
 
 main: main.o utils.o
 	echo création de main

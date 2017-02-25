@@ -11,44 +11,41 @@
 char *buf;
 int idSem;
 int idShm;
+int numero;
 
 int pid = getpid();
 
 int main(int argc, char *argv[])
 {
-	printf("Consommateur ! \n");
-	//sémaphore   1:buffer    2:elemDispo   3:placeDispo
-	if((idSem = semget(KEY, 3 ,0)) == -1)
-	{
-		perror("Erreur sémaphore !");
-		exit(0);
-	}
-	printf("Semaphore obtenue ! \n");
+	numero = atoi(argv[1]);
+	printf("\nConsommateur %d! %d\n", numero, pid);
+	//sémaphore   0:buffer    1:elemDispo   2:placeDispo
+	idSem = SemInit(0);
 	
 	
 	//Création de la mémoire partagée
-	if((idShm = shmget(KEY,(size_t)TAILLEBUF*sizeof(char),0)) == -1)
-	{
-		perror("Erreur de memoire partagee");
-		exit(0);
-	}
-	printf("Shm obtenue");
-	buf = (char*)shmat(idShm,NULL,0);
-	if(buf == (char*)-1)
-	{
-		printf("Shm fail !\n");
-	}
-	printf("Shm ratacher! \n");
+	idShm = ShmInit(0);
+	buf = ShmAttach(idShm);
 	
-	
-	for(int i=0; 1;i++)
+	for(int i=0; i<100;i++)
 	{
+		//wait Elem dispo
 		SemWait(idSem, SEMELEM);
-		//zone de traitement 
 		
+		//zone de traitement 
+		printf("\t\tCons %d -- %d\t\t", numero, i);
+		
+		//consomation carac
+		consCarac(buf, numero);
+		
+		//affiche buffer
+		AfficheTab(buf);
+		
+		//signal Place dispo      + temps d'attente
 		SemSignal(idSem, SEMPLACE);
+		SleepRand(0, 5);
 	}
-	exit(0);
+	exit(1);
 }
 
 
