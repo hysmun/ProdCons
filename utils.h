@@ -3,6 +3,7 @@
 
 
 #define TAILLEBUF (20)
+#define KEY (1337)
 
 
 void AfficheTab(char *ptab);
