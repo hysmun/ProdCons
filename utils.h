@@ -5,6 +5,11 @@
 #define KEY (1337)
 
 
+#define SEMBUF (1)
+#define SEMELEM (2)
+#define SEMPLACE (3)
+
+
 void initTab(char *ptab);
 void AfficheTab(char *ptab);
 

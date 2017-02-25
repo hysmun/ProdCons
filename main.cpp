@@ -15,8 +15,8 @@ char *buf, *ptr;
 
 int main()
 {
-	//sémaphore
-	if((idSem = semget(KEY, 1 ,IPC_CREAT|IPC_EXCL|0600)) == -1)
+	//sémaphore   1:buffer    2:elemDispo   3:placeDispo
+	if((idSem = semget(KEY, 3 ,IPC_CREAT|IPC_EXCL|0600)) == -1)
 	{
 		perror("Erreur sémaphore !");
 		exit(0);
@@ -25,11 +25,12 @@ int main()
 	
 	
 	//Création de la mémoire partagée
-	if((idShm = shmget(KEY,(size_t)TAILLEBUF*sizeof(char),IPC_CREAT | IPC_EXCL|0600)) == -1)
+	if((idShm = shmget(KEY,(size_t)TAILLEBUF*sizeof(char),IPC_CREAT|IPC_EXCL|0600)) == -1)
 	{
 		perror("Erreur de memoire partagee");
 		exit(0);
 	}
+	
 	printf("Shm cree !\n");
 	
 	buf = (char*)shmat(idShm,NULL,0);
@@ -43,6 +44,8 @@ int main()
 	initTab(buf);
 	AfficheTab(buf);
 	
+	
+	//
 	
 	
 	shmctl(idShm, IPC_RMID,0);
