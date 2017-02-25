@@ -18,7 +18,7 @@ int main()
 	//sémaphore
 	if((idSem = semget(KEY, 1 ,IPC_CREAT|IPC_EXCL|0600)) == -1)
 	{
-		perror("Erreur sémaphore !");
+		perror("Erreur sémaphore");
 		exit(0);
 	}
 	//Création de la mémoire partagée
