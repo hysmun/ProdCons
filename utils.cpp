@@ -12,7 +12,7 @@
 void AfficheTab(char *ptab)
 {	
 	printf("Buffer : ");
-	for(int i=0; i< TAILLEBUF; i++)
+	for(int i=0; i < TAILLEBUF; i++)
 	{
 		printf("%c", ptab[i]);
 	}

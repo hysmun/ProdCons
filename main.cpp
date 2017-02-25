@@ -21,13 +21,24 @@ int main()
 		perror("Erreur sémaphore");
 		exit(0);
 	}
+	printf("Semaphore cree ! \n");
+	
 	//Création de la mémoire partagée
 	if(idShm = shmget(KEY,TAILLEBUF*sizeof(char),IPC_CREAT | IPC_EXCL|0600) == -1)
 	{
 		perror("Erreur de memoire partagee");
 		exit(0);
 	}
-	buf = (char*)shmat(idShm,NULL,0);
+	printf("Shm cree !\n");
+	
+	buf = (char*)shmat(idShm,0,0);
+	if(buf == (char*)-1)
+	{
+		printf("Shm fail !\n");
+		exit(0);
+	}
+	printf("Shm ratacher! \n");
+	
 	AfficheTab(buf);
 	//Initialisation du tableau
 	
