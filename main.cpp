@@ -39,8 +39,10 @@ int main()
 	}
 	printf("Shm ratacher! \n");
 	
-	AfficheTab(buf);
 	//Initialisation du tableau
+	initTab(buf);
+	AfficheTab(buf);
+	
 	
 	
 	shmctl(idShm, IPC_RMID,0);
