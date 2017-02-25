@@ -13,7 +13,7 @@ union semun
 {
 	int val;
 	struct semid_ds *buf;
-	short *array;
+	unsigned short *array;
 }arg_sem;
 
 void initTab(char *ptab)
@@ -36,30 +36,40 @@ void AfficheTab(char *ptab)
 
 int SemInit(int idSem)
 {
-	arg_sem.val = 0;
+	unsigned short Val[] = {0,0,TAILLEBUF};
+	arg_sem.array = Val;
 	semctl(idSem, 0, SETALL, arg_sem);
 }
 
 int SemWait(int idSem, int Sema)
 {
-	struct sembuf SemOp;
+	struct sembuf SemOp[2];
 	
-	SemOp.sem_num = Sema;
-	SemOp.sem_op = -1;
-	SemOp.sem_flg = SEM_UNDO;
+	SemOp[0].sem_num = 0;
+	SemOp[0].sem_op = -1;
+	SemOp[0].sem_flg = SEM_UNDO;
 	
-	return semop(idSem, &SemOp, 1);
+	SemOp[1].sem_num = Sema;
+	SemOp[1].sem_op = -1;
+	SemOp[1].sem_flg = SEM_UNDO;
+	
+	return semop(idSem, SemOp, 1);
 }
 
 int SemSignal(int idSem, int Sema)
 {
-	struct sembuf SemOp;
+	struct sembuf SemOp[2];
 	
-	SemOp.sem_num = Sema;
-	SemOp.sem_op = +1;
-	SemOp.sem_flg = SEM_UNDO;
+	SemOp[0].sem_num = 0;
+	SemOp[0].sem_op = +1;
+	SemOp[0].sem_flg = SEM_UNDO;
 	
-	return semop(idSem, &SemOp, 1);
+	
+	SemOp[1].sem_num = Sema;
+	SemOp[1].sem_op = +1;
+	SemOp[1].sem_flg = SEM_UNDO;
+	
+	return semop(idSem, SemOp, 1);
 }
 
 

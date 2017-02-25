@@ -14,7 +14,7 @@
 
 int main()
 {
-	printf("Consomateur ! \n");
+	printf("Consommateur ! \n");
 	exit(0);
 }
 
