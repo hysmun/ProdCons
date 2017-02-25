@@ -12,7 +12,6 @@
 
 int idShm, idSem;
 char *buf, *ptr;
-int idCons,idProd1,idProd2;
 
 int main()
 {
