@@ -9,11 +9,12 @@
 #include <string.h>
 #include "utils.h"
 
-
 int idShm, idSem;
 char *buf, *ptr;
 
-int main()
+int pid = getpid();
+
+int main(int argc, char *argv[])
 {
 	//sémaphore   1:buffer    2:elemDispo   3:placeDispo
 	if((idSem = semget(KEY, 3 ,IPC_CREAT|IPC_EXCL|0600)) == -1)
@@ -48,8 +49,8 @@ int main()
 	//
 	
 	
-	shmctl(idShm, IPC_RMID,0);
-	semctl(idSem, IPC_RMID,0);
+	shmctl(idShm, IPC_RMID, 0);
+	semctl(idSem, IPC_RMID, 0);
 	exit(0);
 }
 

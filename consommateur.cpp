@@ -16,7 +16,7 @@ int pid = getpid();
 
 int main(int argc, char *argv[])
 {
-	printf("Producteur ! \n");
+	printf("Consommateur ! \n");
 	//sémaphore   1:buffer    2:elemDispo   3:placeDispo
 	if((idSem = semget(KEY, 3 ,0)) == -1)
 	{
@@ -40,12 +40,13 @@ int main(int argc, char *argv[])
 	}
 	printf("Shm ratacher! \n");
 	
+	
 	for(int i=0; 1;i++)
 	{
-		SemWait(idSem, SEMPLACE);
+		SemWait(idSem, SEMELEM);
 		//zone de traitement 
 		
-		SemSignal(idSem, SEMELEM);
+		SemSignal(idSem, SEMPLACE);
 	}
 	exit(0);
 }

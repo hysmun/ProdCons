@@ -72,7 +72,18 @@ int SemSignal(int idSem, int Sema)
 	return semop(idSem, SemOp, 1);
 }
 
-
+int ShmInit(int flag)
+{
+	int idShm;
+	if((idShm = shmget(KEY,(size_t)TAILLEBUF*sizeof(char),IPC_CREAT|IPC_EXCL|0600)) == -1)
+	{
+		perror("Erreur de memoire partagee");
+		exit(0);
+	}
+	
+	printf("Shm cree !\n");
+	return idShm;
+}
 
 
 

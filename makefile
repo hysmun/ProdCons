@@ -22,9 +22,9 @@ producteur: producteur.o utils.o
 	echo création de producteur
 	$(CC) -o producteur producteur.o utils.o $(CFLAGS)
 
-consomateur: consomateur.o utils.o
-	echo création de consomateur
-	$(CC) -o consomateur consomateur.o utils.o $(CFLAGS)
+consommateur: consommateur.o utils.o
+	echo création de consommateur
+	$(CC) -o consommateur consommateur.o utils.o $(CFLAGS)
 
 
 
@@ -36,9 +36,9 @@ producteur.o: producteur.cpp utils.h
 	echo $@
 	$(CC) -o producteur.o -c producteur.cpp $(CFLAGS)
 
-consomateur.o: consomateur.cpp
+consommateur.o: consommateur.cpp
 	echo $@
-	$(CC) -o consomateur.o -c consomateur.cpp $(CFLAGS)
+	$(CC) -o consommateur.o -c consommateur.cpp $(CFLAGS)
 
 utils.o: utils.cpp utils.h
 	echo $@

@@ -17,7 +17,7 @@ int SemInit(int idSem);
 int SemWait(int idSem, int Sema);
 int SemSignal(int idSem, int Sema);
 
-
+int ShmInit(int flag);
 
 
 
