@@ -12,6 +12,7 @@
 
 int idShm, idSem;
 char *buf, *ptr;
+int idCons,idProd1,idProd2;
 
 int main()
 {
@@ -30,17 +31,19 @@ int main()
 		perror("Erreur de memoire partagee");
 		exit(0);
 	}
-	printf("Shm cree !\n");
+	printf("Shm cree\n");
 	
 	buf = (char*)shmat(idShm,0,0);
 	if(buf == (char*)-1)
 	{
-		printf("Shm fail !\n");
+		printf("Shm fail\n");
 	}
-	printf("Shm ratacher! \n");
+	printf("Shm rattachee\n");
 	
-	AfficheTab(buf);
 	//Initialisation du tableau
+	initTab(buf);
+	AfficheTab(buf);
+	
 	
 	
 	shmctl(idShm, IPC_RMID,0);
