@@ -23,8 +23,9 @@ int main()
 	}
 	printf("Semaphore cree ! \n");
 	
+	
 	//Création de la mémoire partagée
-	if(idShm = shmget(KEY,TAILLEBUF*sizeof(char),IPC_CREAT | IPC_EXCL|0600) == -1)
+	if((idShm = shmget(KEY,(size_t)TAILLEBUF*sizeof(char),IPC_CREAT | IPC_EXCL|0600)) == -1)
 	{
 		perror("Erreur de memoire partagee");
 		exit(0);
@@ -35,13 +36,15 @@ int main()
 	if(buf == (char*)-1)
 	{
 		printf("Shm fail !\n");
-		exit(0);
 	}
 	printf("Shm ratacher! \n");
 	
 	AfficheTab(buf);
 	//Initialisation du tableau
 	
+	
+	shmctl(idShm, IPC_RMID,0);
+	semctl(idSem, IPC_RMID,0);
 	exit(0);
 }
 
