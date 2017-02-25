@@ -72,7 +72,7 @@ git:
 
 ipcrm:
 	clear
-	ipcrm -Q 1234
+	ipcrm -M 1337 -S 1337
 
 
 

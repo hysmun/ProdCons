@@ -9,20 +9,26 @@
 #include <string.h>
 #include "utils.h"
 
-int shmKey = 1337;
-int shmId;
+
+int idShm, idSem;
 char *buf, *ptr;
 
 int main()
 {
+	//sémaphore
+	if((idSem = semget(KEY, 1 ,IPC_CREAT|IPC_EXCL|0600)) == -1)
+	{
+		perror("Erreur sémaphore !");
+		exit(0);
+	}
 	//Création de la mémoire partagée
-	if(shmId = shmget(shmKey,TAILLEBUF,0644 | IPC_CREAT | IPC_EXCL) == -1)
+	if(idShm = shmget(KEY,TAILLEBUF*sizeof(char),IPC_CREAT | IPC_EXCL|0600) == -1)
 	{
 		perror("Erreur de memoire partagee");
 		exit(0);
 	}
-	buf = (char*)shmat(shmId,NULL,0);
-	printf("%p",buf);
+	buf = (char*)shmat(idShm,NULL,0);
+	AfficheTab(buf);
 	//Initialisation du tableau
 	
 	exit(0);
