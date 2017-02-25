@@ -6,15 +6,13 @@
 #include <sys/shm.h>
 #include <sys/sem.h>
 #include <string.h>
-
 #include "utils.h"
+
 
 void AfficheTab(char *ptab)
 {
-	
+
 }
-
-
 
 int SemWait(int idSem, int Sema)
 {
