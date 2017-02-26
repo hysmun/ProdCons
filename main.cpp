@@ -38,7 +38,7 @@ int main(int argc, char *argv[])
 	//Fork producteur 
 	for(int i=0; i<NBPROD; i++)
 	{
-		if((pidFilsProd[i] = fork()))
+		if(!(pidFilsProd[i] = fork()))
 		{
 			sprintf(tmp,"%d", i);
 			execlp("./producteur","producteur",tmp,NULL);
@@ -55,7 +55,7 @@ int main(int argc, char *argv[])
 	//Fork consommateur
 	for(int i=0; i<NBCONS; i++)
 	{
-		if((pidFilsCons[i] = fork()) )
+		if(!(pidFilsCons[i] = fork()) )
 		{
 			sprintf(tmp,"%d", i);
 			execlp("./consommateur","consommateur",tmp,NULL);
@@ -87,8 +87,8 @@ int main(int argc, char *argv[])
 	
 	//Liberation des IPCs
 	printf("fin prog + suppression IPC\n");
-	//shmctl(idShm, IPC_RMID,0);
-	//semctl(idSem, IPC_RMID,0);
+	shmctl(idShm, IPC_RMID,0);
+	semctl(idSem, IPC_RMID,0);
 
 	exit(0);
 }

@@ -27,7 +27,7 @@ int main(int argc, char *argv[])
 	idShm = ShmInit(0);
 	buf = ShmAttach(idShm);
 	
-	for(int i=0; i<200;i++)
+	for(int i=0; i<100;i++)
 	{
 		//wait Elem dispo
 		SemWait(idSem, SEMELEM);
@@ -43,7 +43,7 @@ int main(int argc, char *argv[])
 		
 		//signal Place dispo      + temps d'attente
 		SemSignal(idSem, SEMPLACE);
-		//SleepRand(0, 5);
+		SleepRand(0, 5);
 	}
 	exit(1);
 }

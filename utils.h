@@ -9,8 +9,8 @@
 #define SEMELEM (1)
 #define SEMPLACE (2)
 
-#define NBCONS (1)
-#define NBPROD (2)
+#define NBCONS (10)
+#define NBPROD (10)
 
 void initTab(char *ptab);
 void AfficheTab(char *ptab);
