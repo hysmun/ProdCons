@@ -9,8 +9,8 @@
 #define SEMELEM (1)
 #define SEMPLACE (2)
 
-#define NBCONS (10)
-#define NBPROD (10)
+#define NBCONS (3)
+#define NBPROD (3)
 
 void initTab(char *ptab);
 void AfficheTab(char *ptab);
@@ -22,8 +22,8 @@ int ShmInit(int flag);
 int SemInit(int flag);
 char *ShmAttach(int idShm);
 
-char prodCarac(char *buf, int numero, char Actu);
-int consCarac(char *buf, int numero);
+char prodCarac(char *buf, int numero, char Actu, int *posActu);
+int consCarac(char *buf, int numero, int *posActu);
 
 int SleepRand(int min, int max);
 

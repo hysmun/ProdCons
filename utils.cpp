@@ -143,7 +143,7 @@ char *ShmAttach(int idShm)
 	return buf;
 }
 
-char prodCarac(char *buf, int numero, char Actu)
+char prodCarac(char *buf, int numero, char Actu, int *posActu)
 {
 	if(buf == NULL)
 		return -1;
@@ -155,30 +155,38 @@ char prodCarac(char *buf, int numero, char Actu)
 			numero==1 ? carac = 'a' : carac = 'A';
 	for(int i=0; i<TAILLEBUF; i++)
 	{
+		if(*posActu == TAILLEBUF)
+			*posActu = 0;
 		// si non alphabetique on peut produire a cette place
-		if(!isalpha((int)buf[i]))
+		if(!isalpha((int)buf[*posActu]))
 		{
-			buf[i] = carac;
-			carac = (carac+1);//pour que le carac change au prochain 
+			buf[*posActu] = carac;
+			carac = (carac+1);//pour que le carac change au prochain
+			(*posActu)++; 
 			return carac;
 		}
+		(*posActu)++;
 	}
 	return carac;
 }
 
-int consCarac(char *buf, int numero)
+int consCarac(char *buf, int numero, int *posActu)
 {
 	if(buf == NULL)
 		return -1;
 		
 	for(int i=0; i<TAILLEBUF; i++)
 	{
+		if(*posActu == TAILLEBUF)
+			*posActu = 0;
 		//si c'est alphabetique on peut le consommer
-		if(isalpha((int)buf[i]))
+		if(isalpha((int)buf[*posActu]))
 		{
-			buf[i]='&';
+			buf[*posActu]='&';
+			(*posActu)++;
 			return 1;
 		}
+		(*posActu)++;
 	}
 	//on a rien trouver a consommer
 	return -1;

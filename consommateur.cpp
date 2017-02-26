@@ -12,6 +12,7 @@ char *buf;
 int idSem;
 int idShm;
 int numero;
+int posActu;
 
 int pid = getpid();
 
@@ -27,6 +28,7 @@ int main(int argc, char *argv[])
 	idShm = ShmInit(0);
 	buf = ShmAttach(idShm);
 	
+	posActu=0;
 	for(int i=0; i<100;i++)
 	{
 		//wait Elem dispo
@@ -36,7 +38,7 @@ int main(int argc, char *argv[])
 		printf("\t\tCons %d -- %d\t\t", numero, i);
 		
 		//consomation carac
-		consCarac(buf, numero);
+		consCarac(buf, numero, &posActu);
 		
 		//affiche buffer
 		AfficheTab(buf);

@@ -14,6 +14,7 @@ int idShm;
 
 int pid = getpid();
 int numero;
+int posActu;
 
 int main(int argc, char *argv[])
 {
@@ -29,6 +30,7 @@ int main(int argc, char *argv[])
 	
 	numero == 0 ? caracActu ='a' : caracActu='A';
 	
+	posActu=0;
 	for(int i=0; i<100;i++)
 	{
 		//wait Place dispo
@@ -38,7 +40,7 @@ int main(int argc, char *argv[])
 		printf("\tProd %d -- %d\t\t\t", numero, i);
 		
 		//production carac
-		caracActu = prodCarac(buf, numero, caracActu);
+		caracActu = prodCarac(buf, numero, caracActu, &posActu);
 		
 		//affichage Buffer
 		AfficheTab(buf);
