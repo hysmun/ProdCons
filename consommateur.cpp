@@ -43,7 +43,7 @@ int main(int argc, char *argv[])
 		
 		//signal Place dispo      + temps d'attente
 		SemSignal(idSem, SEMPLACE);
-		//SleepRand(0, 5);
+		SleepRand(0, 5);
 	}
 	exit(1);
 }
