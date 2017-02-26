@@ -46,7 +46,7 @@ int main(int argc, char *argv[])
 		
 		//signal Elem dispo     + temps d'attente
 		SemSignal(idSem, SEMELEM);
-		SleepRand(5, 10);
+		SleepRand(0, 5);
 	}
 	exit(1);
 }

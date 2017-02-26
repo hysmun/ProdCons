@@ -1,7 +1,7 @@
 #ifndef __UTILS_H__
 #define __UTILS_H__
 
-#define TAILLEBUF (50)
+#define TAILLEBUF (20)
 #define KEY (1337)
 
 #define SEMBUF (0)
