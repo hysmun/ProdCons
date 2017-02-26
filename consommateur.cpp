@@ -27,7 +27,7 @@ int main(int argc, char *argv[])
 	idShm = ShmInit(0);
 	buf = ShmAttach(idShm);
 	
-	for(int i=0; i<100;i++)
+	for(int i=0; i<200;i++)
 	{
 		//wait Elem dispo
 		SemWait(idSem, SEMELEM);
