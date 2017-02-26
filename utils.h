@@ -12,6 +12,7 @@
 #define NBCONS (3)
 #define NBPROD (3)
 
+
 void initTab(char *ptab);
 void AfficheTab(char *ptab);
 
