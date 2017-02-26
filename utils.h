@@ -1,16 +1,15 @@
 #ifndef __UTILS_H__
 #define __UTILS_H__
 
-#define TAILLEBUF (20)
+#define TAILLEBUF (50)
 #define KEY (1337)
-
 
 #define SEMBUF (0)
 #define SEMELEM (1)
 #define SEMPLACE (2)
 
-#define NBCONS (3)
-#define NBPROD (3)
+#define NBCONS (1)
+#define NBPROD (2)
 
 
 void initTab(char *ptab);

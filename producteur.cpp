@@ -27,11 +27,10 @@ int main(int argc, char *argv[])
 	//Création de la mémoire partagée
 	idShm = ShmInit(0);
 	buf = ShmAttach(idShm);
-	
-	numero == 0 ? caracActu ='a' : caracActu='A';
+	(numero%2) == 0 ? caracActu ='a' : caracActu='A';
 	
 	posActu=0;
-	for(int i=0; i<100;i++)
+	for(int i=0; 1;i++)
 	{
 		//wait Place dispo
 		SemWait(idSem, SEMPLACE);
@@ -47,7 +46,7 @@ int main(int argc, char *argv[])
 		
 		//signal Elem dispo     + temps d'attente
 		SemSignal(idSem, SEMELEM);
-		SleepRand(0, 5);
+		SleepRand(5, 10);
 	}
 	exit(1);
 }

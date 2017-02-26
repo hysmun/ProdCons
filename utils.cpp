@@ -152,7 +152,7 @@ char prodCarac(char *buf, int numero, char Actu, int *posActu)
 	
 	numero = numero%2;// 0 = minuscule     1 = MAJUSCULE
 	if(carac == 'z' || carac == 'Z')
-			numero==1 ? carac = 'a' : carac = 'A';
+			numero==0 ? carac = 'a' : carac = 'A';
 	for(int i=0; i<TAILLEBUF; i++)
 	{
 		if(*posActu == TAILLEBUF)

@@ -29,7 +29,7 @@ int main(int argc, char *argv[])
 	buf = ShmAttach(idShm);
 	
 	posActu=0;
-	for(int i=0; i<100;i++)
+	for(int i=0; 1;i++)
 	{
 		//wait Elem dispo
 		SemWait(idSem, SEMELEM);
